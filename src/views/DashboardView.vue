@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full h-full px-5 py-10 sm:px-20 overflow-auto">
+  <div class="w-full h-full px-5 py-10 md:px-20 overflow-auto">
     <div class="w-full min-h-full flex flex-col gap-4 justify-between">
       <h1 class="text-left text-3xl text-brandGrey-300">User list</h1>
       <div

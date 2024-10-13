@@ -9,7 +9,7 @@
         firstName="Milos"
         lastName="Stojanovic"
         v-on:clickEdit="() => navigateModifyUser(i)"
-        v-on:clickRemove="() => {}"
+        v-on:clickRemove="() => setIsOverlayOpen(true)"
       />
     </table>
   </div>
@@ -19,7 +19,9 @@
 import TableHead from "./TableHead.vue";
 import TableRow from "./TableRow.vue";
 import { useRouter } from "vue-router";
+import { useStore } from "vuex";
 
+const store = useStore();
 const router = useRouter();
 
 const navigateModifyUser = (userId: number) => {
@@ -29,5 +31,9 @@ const navigateModifyUser = (userId: number) => {
       userId,
     },
   });
+};
+
+const setIsOverlayOpen = (val: boolean) => {
+  store.commit("app/setShowOverlay", val);
 };
 </script>
