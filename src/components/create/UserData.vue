@@ -2,7 +2,7 @@
   <div
     class="bg-white rounded-[6px] shadow-md px-[20px] pb-[25px] pt-[50px] flex flex-col justify-between gap-4"
   >
-    <div class="grid grid-cols-2 gap-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <InputCell
         cell-name="First Name"
         :value="firstName"
@@ -15,10 +15,10 @@
       />
     </div>
 
-    <div class="text-left">
+    <div class="md:text-left">
       <button
         :disabled="buttonDisabled"
-        class="bg-accent-200 hover:bg-accent-100 disabled:opacity-70 disabled:hover:bg-accent-200 text-white text-sm px-[16px] py-[8px] rounded-[5px]"
+        class="w-full md:w-auto bg-accent-200 hover:bg-accent-100 disabled:opacity-70 disabled:hover:bg-accent-200 text-white text-sm px-[16px] py-[8px] rounded-[5px]"
       >
         Update Details
       </button>
