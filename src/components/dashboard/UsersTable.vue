@@ -1,13 +1,21 @@
+<script setup lang="ts">
+import TableHead from "./TableHead.vue";
+import TableRow from "./TableRow.vue";
+</script>
+
 <template>
   <div class="w-full flex-1">
     <table class="w-full">
-      <tr
-        class="grid grid-cols-[110px_1fr_110px] [&>*]:text-left [&>*]:text-sm"
-      >
-        <th></th>
-        <th>Full Name</th>
-        <th>Action</th>
-      </tr>
+      <TableHead />
+      <TableRow
+        v-for="(item, i) in Array(9)"
+        :key="i"
+        :index="i"
+        firstName="Milos"
+        lastName="Stojanovic"
+        v-on:clickEdit="() => {}"
+        v-on:clickRemove="() => {}"
+      />
     </table>
   </div>
 </template>

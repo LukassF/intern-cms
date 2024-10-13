@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full h-full sm:px-20 sm:py-10 overflow-auto">
+  <div class="w-full h-full px-5 py-10 sm:px-20 overflow-auto">
     <!-- <nav>
       <router-link to="/">Dashboard</router-link>
       <router-link to="/create">Create</router-link>
@@ -14,7 +14,15 @@
         <UsersTableHeader />
         <UsersTable />
       </div>
-      <div class="h-[40px] bg-blue-400"></div>
+      <PaginationController
+        :pages="2"
+        :active-page="1"
+        v-on:click-page="
+          (pageIndex) => {
+            console.log(pageIndex);
+          }
+        "
+      />
     </div>
   </div>
 </template>
@@ -22,6 +30,7 @@
 <script setup lang="ts">
 import UsersTableHeader from "@/components/dashboard/UsersTableHeader.vue";
 import UsersTable from "@/components/dashboard/UsersTable.vue";
+import PaginationController from "@/components/dashboard/PaginationController.vue";
 </script>
 
 <!-- <script lang="ts">

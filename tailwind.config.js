@@ -3,6 +3,10 @@ module.exports = {
   content: ["./index.html", "./src/**/*.{vue,js,ts,jsx,tsx}"],
   theme: {
     extend: {
+      screens: {
+        xs: "525px",
+        "2xs": "400px",
+      },
       colors: {
         primary: "#f5f7f9",
         accent: {
@@ -10,8 +14,9 @@ module.exports = {
           200: "#41946F",
         },
         brandGrey: {
-          100: "#747480",
-          200: "#AEB5BC",
+          100: "#AEB5BC",
+          200: "#747480",
+
           300: "#4A4F56",
         },
       },
