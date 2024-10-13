@@ -55,7 +55,7 @@ interface ITableRow {
   image?: string;
   firstName: string;
   lastName: string;
-  onClickEdit: () => void;
+  onClickEdit: (userId: number) => void;
   onClickRemove: () => void;
 }
 

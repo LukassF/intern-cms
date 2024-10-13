@@ -1,7 +1,3 @@
-<script setup lang="ts">
-import SearchIcon from "../icons/SearchIcon.vue";
-</script>
-
 <template>
   <div
     class="w-full flex flex-col 2xs:flex-row 2xs:justify-between items-stretch 2xs:items-center gap-5"
@@ -21,8 +17,22 @@ import SearchIcon from "../icons/SearchIcon.vue";
 
     <button
       class="bg-accent-200 text-sm text-white px-[22px] py-[8px] rounded-[20px] hover:bg-accent-100"
+      @click="navigateCreateUser"
     >
       + Add user
     </button>
   </div>
 </template>
+
+<script setup lang="ts">
+import SearchIcon from "../icons/SearchIcon.vue";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+
+const navigateCreateUser = () => {
+  router.push({
+    name: "create",
+  });
+};
+</script>
