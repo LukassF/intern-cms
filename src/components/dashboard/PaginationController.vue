@@ -10,21 +10,21 @@
       <DoubleArrowLeftIcon size="12" />
     </button>
     <button
-      v-for="(page, i) in Array(props.pages)"
+      v-for="(_, i) in Array(pages)"
       :key="i"
       :class="`${
-        i + 1 == props.activePage
+        i + 1 === activePage
           ? 'bg-accent-200 text-white'
           : 'bg-white text-accent-200 hover:text-accent-100'
       } h-full aspect-square flex items-center justify-center text-sm `"
-      @click="() => props.onClickPage(i + 1)"
+      @click="() => updateActivePage(i + 1)"
     >
       {{ i + 1 }}
     </button>
     <button
       class="bg-white h-full aspect-square flex items-center justify-center disabled:text-brandGrey-100 text-accent-200 hover:text-accent-100"
       @click="onClickNextPage"
-      :disabled="activePage === props.pages"
+      :disabled="activePage === pages"
     >
       <DoubleArrowRightIcon size="12" />
     </button>
@@ -34,21 +34,31 @@
 <script setup lang="ts">
 import DoubleArrowLeftIcon from "../icons/DoubleArrowLeftIcon.vue";
 import DoubleArrowRightIcon from "../icons/DoubleArrowRightIcon.vue";
-import { defineProps } from "vue";
+import { computed } from "@vue/reactivity";
+import { getNumberOfPages } from "@/utils/utils";
+import { watchEffect } from "vue";
+import { useTypedStore } from "@/store";
 
-interface IPaginationController {
-  pages: number;
-  activePage: number;
-  onClickPage: (pageIndex: number) => void;
-}
+const store = useTypedStore();
+const activePage = computed(() => store.state.dashboard.activePage);
+const filteredUsers = computed(() => store.getters["users/getFilteredUsers"]);
+const pages = computed(() => getNumberOfPages(filteredUsers.value.length));
 
-const props = defineProps<IPaginationController>();
+const updateActivePage = (page: number) => {
+  store.commit("dashboard/SET_ACTIVE_PAGE", page);
+};
+
+watchEffect(() => {
+  if (pages.value && pages.value < activePage.value) {
+    updateActivePage(pages.value);
+  }
+});
 
 const onClickNextPage = () => {
-  if (props.activePage < props.pages) props.onClickPage(props.activePage + 1);
+  if (activePage.value < pages.value) updateActivePage(activePage.value + 1);
 };
 
 const onClickPreviousPage = () => {
-  if (props.activePage > 1) props.onClickPage(props.activePage - 1);
+  if (activePage.value > 1) updateActivePage(activePage.value - 1);
 };
 </script>

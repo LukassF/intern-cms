@@ -20,6 +20,15 @@ module.exports = {
           300: "#4A4F56",
         },
       },
+      animation: {
+        load: "load 1.5s linear infinite",
+      },
+      keyframes: {
+        load: {
+          "0%, 100%": { backgroundPosition: "0% 0%" },
+          "50%": { backgroundPosition: "100% 100%" },
+        },
+      },
     },
   },
   plugins: [],

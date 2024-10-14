@@ -10,20 +10,32 @@ export const OverlayWrapper = defineComponent({
       type: Function,
       required: true,
     },
+    unmountOverlay: {
+      type: Function,
+      required: true,
+    },
   },
 
   setup(props, { slots }) {
     const display = ref("hidden");
     const opacity = ref("bg-[rgb(0,0,0,0)]");
+    const animating = ref(false);
+
+    const handleClose = () => {
+      props.onClose();
+      opacity.value = "bg-[rgb(0,0,0,0)]";
+      animating.value = true;
+
+      setTimeout(() => {
+        display.value = "hidden";
+        animating.value = false;
+        props.unmountOverlay();
+      }, 400);
+    };
 
     const handleOverlayClick = (e: Event) => {
-      if (e.target === e.currentTarget) {
-        props.onClose();
-        opacity.value = "bg-[rgb(0,0,0,0)]";
-
-        setTimeout(() => {
-          display.value = "hidden";
-        }, 400);
+      if (e.target === e.currentTarget && !animating.value) {
+        handleClose();
       }
     };
 
@@ -35,12 +47,7 @@ export const OverlayWrapper = defineComponent({
           opacity.value = "bg-[rgb(0,0,0,0.5)]";
         }, 0);
       } else {
-        opacity.value = "bg-[rgb(0,0,0,0)]";
-
-        props.onClose();
-        setTimeout(() => {
-          display.value = "hidden";
-        }, 400);
+        handleClose();
       }
     });
 

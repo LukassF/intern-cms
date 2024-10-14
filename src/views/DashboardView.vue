@@ -8,11 +8,7 @@
         <UsersTableHeader />
         <UsersTable />
       </div>
-      <PaginationController
-        :pages="store.state.dashboard.numberOfPages"
-        :active-page="store.state.dashboard.activePage"
-        v-on:click-page="updateActivePage"
-      />
+      <PaginationController />
     </div>
   </div>
 </template>
@@ -21,11 +17,4 @@
 import UsersTableHeader from "@/components/dashboard/UsersTableHeader.vue";
 import UsersTable from "@/components/dashboard/UsersTable.vue";
 import PaginationController from "@/components/dashboard/PaginationController.vue";
-import { useStore } from "vuex";
-
-const store = useStore();
-
-const updateActivePage = (page: number) => {
-  store.commit("dashboard/setActivePage", page);
-};
 </script>
