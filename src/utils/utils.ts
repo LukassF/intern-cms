@@ -24,10 +24,13 @@ export function useMediaQuery(query: string) {
   return { matches };
 }
 
-export const getUsersForPage = (users: IUser[], page: number) => {
+export const getUsersForPage = (
+  users: Array<IUser | undefined>,
+  page: number
+) => {
   return [...users].filter(
-    (_, idx) =>
-      idx + 1 <= page * USERS_PER_PAGE && idx + 1 > (page - 1) * USERS_PER_PAGE
+    (user, idx) =>
+      idx >= (page - 1) * USERS_PER_PAGE && idx < page * USERS_PER_PAGE
   );
 };
 
@@ -60,4 +63,8 @@ export const createRequestFromUser = (user: IUser): IRequestUser => {
     last_name: user.lastName,
     avatar: user.avatar,
   };
+};
+
+export const allUsersLoaded = (usersArr: Array<IUser | undefined>) => {
+  return !usersArr.some((user) => !user);
 };

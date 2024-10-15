@@ -42,6 +42,9 @@ export interface IDahboardState {
 }
 
 export interface IUsersState {
-  totalUsersCount: number;
+  totalCountDeleted: number;
+  totalCountApi: number;
+  totalCountCreated: number;
   users: Record<number, IUser>;
+  array: Array<IUser | undefined>;
 }

@@ -1,10 +1,10 @@
 <template>
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    :height="size ?? 24"
+    :height="props.size ?? 24"
     viewBox="0 0 24 24"
-    :width="size ?? 24"
-    :class="`${customClass}`"
+    :width="props.size ?? 24"
+    :class="`${props.customClass}`"
   >
     <path d="M0 0h24v24H0z" fill="none" />
     <circle cx="12" cy="12" r="3.2" fill="currentColor" />

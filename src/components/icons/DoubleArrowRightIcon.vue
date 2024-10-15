@@ -1,11 +1,11 @@
 <template>
   <svg
-    :width="size ?? 15"
-    :height="size ?? 15"
+    :width="props.size ?? 15"
+    :height="props.size ?? 15"
     viewBox="0 0 15 15"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
-    :class="`${customClass}`"
+    :class="`${props.customClass}`"
   >
     <path
       fill-rule="evenodd"

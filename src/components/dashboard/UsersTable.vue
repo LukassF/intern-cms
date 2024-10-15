@@ -1,7 +1,7 @@
 <template>
   <div class="w-full flex-1">
     <table class="w-full">
-      <TableHead v-if="usersForPage?.length > 0" />
+      <TableHead v-if="usersForPage?.length > 0 && !isLoading" />
       <div v-if="isLoading">
         <LoaderTableRow v-for="(_, idx) in Array(USERS_PER_PAGE)" :key="idx" />
       </div>
@@ -10,11 +10,11 @@
           v-for="(user, i) in usersForPage"
           :key="i"
           :index="i"
-          :firstName="user.firstName"
-          :lastName="user.lastName"
-          :image="user.avatar"
-          v-on:clickEdit="() => navigateModifyUser(user.id)"
-          v-on:clickRemove="() => setOverlayDelete(true, DeleteModal, user.id)"
+          :firstName="user!.firstName"
+          :lastName="user!.lastName"
+          :image="user!.avatar"
+          v-on:clickEdit="() => navigateModifyUser(user!.id)"
+          v-on:clickRemove="() => setOverlayDelete(true, DeleteModal, user!.id)"
         />
       </div>
       <div v-else class="p-5 sm:p-10 flex flex-col justify-center items-center">
@@ -36,21 +36,21 @@
 import TableHead from "./TableHead.vue";
 import TableRow from "./TableRow.vue";
 import { useRouter } from "vue-router";
-import { Component, computed, ref } from "vue";
+import { Component, computed, ref, watchEffect } from "vue";
 import DeleteModal from "../modals/DeleteModal.vue";
 import { getUsersForPage } from "@/utils/utils";
 import { useTypedStore } from "@/store";
 import LoaderTableRow from "./LoaderTableRow.vue";
 import { USERS_PER_PAGE } from "@/utils/constants";
-import ImageHandler from "../shared/ImageHandler.vue";
 
 const store = useTypedStore();
 const router = useRouter();
 
 const activePage = computed(() => store.state.dashboard.activePage);
-const filteredUsers = computed(() => store.getters["users/getFilteredUsers"]);
+const filteredUsers = computed(() => store.getters["users/getFilteredArray"]);
+
 const usersForPage = computed(() =>
-  getUsersForPage(filteredUsers.value, activePage.value)
+  getUsersForPage(filteredUsers.value, activePage.value).filter((user) => user)
 );
 
 const isLoading = computed(() => store.state.dashboard.tableLoading);

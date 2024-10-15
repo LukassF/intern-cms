@@ -31,6 +31,7 @@ import { ref } from "vue";
 import SearchIcon from "../icons/SearchIcon.vue";
 import { useRouter } from "vue-router";
 import { useTypedStore } from "@/store";
+import { allUsersLoaded } from "@/utils/utils";
 
 const router = useRouter();
 const store = useTypedStore();
@@ -42,8 +43,12 @@ const navigateCreateUser = () => {
   });
 };
 
-const setSearchValue = (val: string) => {
+const setSearchValue = async (val: string) => {
   searchValue.value = val;
+  // some users are not loaded
+  if (!allUsersLoaded(store.state.users.array)) {
+    await store.dispatch("users/getAllUsers");
+  }
   store.commit("dashboard/SET_USER_SEARCH", val);
 };
 </script>

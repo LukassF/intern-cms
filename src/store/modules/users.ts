@@ -1,4 +1,8 @@
-import { BACKEND_URL, USERS_PER_PAGE } from "@/utils/constants";
+import {
+  BACKEND_URL,
+  PLACEHOLDER_USER,
+  USERS_PER_PAGE,
+} from "@/utils/constants";
 import {
   IAppState,
   IOverlayData,
@@ -8,6 +12,7 @@ import {
   IUsersState,
 } from "@/utils/types";
 import {
+  allUsersLoaded,
   createRequestFromUser,
   createUserFromResponse,
   getNumberOfPages,
@@ -22,7 +27,10 @@ export default {
   namespaced: true,
   state: (): IUsersState => ({
     users: {},
-    totalUsersCount: 0,
+    totalCountApi: 0,
+    totalCountCreated: 0,
+    totalCountDeleted: 0,
+    array: [],
   }),
   getters: {
     getFilteredUsers(state: IUsersState, _: any, rootState: IRootState) {
@@ -30,47 +38,105 @@ export default {
         matchesSearch(user, rootState.dashboard.userSearch)
       );
     },
+    getFilteredArray(state: IUsersState, _: any, rootState: IRootState) {
+      return [...state.array].filter((user) =>
+        matchesSearch(user ?? PLACEHOLDER_USER, rootState.dashboard.userSearch)
+      );
+    },
+    getTotalUsers(state: IUsersState) {
+      return allUsersLoaded(state.array)
+        ? state.array.length
+        : state.totalCountApi +
+            state.totalCountCreated -
+            state.totalCountDeleted;
+    },
   },
   mutations: {
-    SET_USERS(state: IUsersState, users: IUser[]) {
+    SET_TOTAL_COUNT_API(state: IUsersState, val: number) {
+      state.totalCountApi = val;
+      state.array = Array(val).fill(undefined);
+    },
+    INCREMENT_TOTAL_COUNT_CREATED(state: IUsersState) {
+      state.totalCountCreated++;
+    },
+    SET_USERS_ARRAY(state: IUsersState, array: Array<IUser | undefined>) {
+      state.array = array;
+    },
+    SET_USERS(
+      state: IUsersState,
+      {
+        users,
+        page,
+        perPage = USERS_PER_PAGE,
+      }: { users: IUser[]; page: number; perPage: number }
+    ) {
       if (users) {
-        users.forEach((user) => {
+        users.forEach((user, idx) => {
           state.users[user.id] = user;
+          state.array[(page - 1) * perPage + idx] = user;
         });
-        state.totalUsersCount = users.length;
       }
     },
     ADD_OR_MODIFY_USER(state: IUsersState, user: IUser) {
-      if (!Object.keys(state.users).includes(user.id.toString())) {
-        state.totalUsersCount++;
-      }
       state.users[user.id] = user;
+      const findIdx = state.array.findIndex((item) => item?.id === user.id);
+      if (findIdx === -1) {
+        state.array.push(user);
+        state.totalCountCreated++;
+      } else {
+        state.array[findIdx] = user;
+      }
     },
     REMOVE_USER(state: IUsersState, userId: number) {
       if (state.users[userId]) {
         delete state.users[userId];
-        state.totalUsersCount--;
+        const findIdx = state.array.findIndex((item) => item?.id === userId);
+
+        if (findIdx !== -1) {
+          state.array.splice(findIdx, 1);
+        }
+        state.totalCountDeleted++;
       }
     },
   },
   actions: {
-    // we have to get all users because of maintainability isues, visit README.md for more info
-    async getAllUsers(
-      { commit }: ActionContext<IUsersState, IRootState>,
-      delay?: number
+    async getUsers(
+      { state, commit }: ActionContext<IUsersState, IRootState>,
+      { pageIdx }: { pageIdx: number }
     ) {
       try {
         commit("dashboard/SET_TABLE_LOADING", true, { root: true });
 
-        const response = await axios.get(BACKEND_URL);
+        const usersResponse = await axios.get(
+          `${BACKEND_URL}?per_page=${USERS_PER_PAGE}&page=${pageIdx}&delay=5`
+        );
 
-        if (!response?.data?.data) {
-          throw new Error("Invalid response total");
+        if (!usersResponse?.data?.data) {
+          throw new Error("Invalid response users");
         }
-        const total = response.data.total;
+        const users: IResponseUser[] = usersResponse.data.data;
+        const payloadUsers: IUser[] = users.map(createUserFromResponse);
+
+        if (!state.totalCountApi) {
+          commit("SET_TOTAL_COUNT_API", usersResponse.data.total);
+        }
+        commit("SET_USERS", { users: payloadUsers, page: pageIdx });
+      } catch (error) {
+        console.log("Failed to get users", error);
+      } finally {
+        commit("dashboard/SET_TABLE_LOADING", false, { root: true });
+      }
+    },
+    // we have to use getAllUsers because of maintainability isues, visit README.md for more info
+    async getAllUsers({
+      state,
+      commit,
+    }: ActionContext<IUsersState, IRootState>) {
+      try {
+        commit("dashboard/SET_TABLE_LOADING", true, { root: true });
 
         const allUsersResponse = await axios.get(
-          `${BACKEND_URL}?per_page=${total}&page=1&delay${delay}`
+          `${BACKEND_URL}?per_page=${state.totalCountApi}&page=${1}`
         );
 
         if (!allUsersResponse?.data?.data) {
@@ -79,14 +145,17 @@ export default {
         const users: IResponseUser[] = allUsersResponse.data.data;
         const payloadUsers: IUser[] = users.map(createUserFromResponse);
 
-        commit("SET_USERS", payloadUsers);
+        commit("SET_USERS", {
+          users: payloadUsers,
+          page: 1,
+          perPage: state.totalCountApi,
+        });
       } catch (error) {
         console.log("Failed to get users", error);
       } finally {
         commit("dashboard/SET_TABLE_LOADING", false, { root: true });
       }
     },
-
     async modifyUser(
       { commit }: ActionContext<IUsersState, IRootState>,
       user: IUser
@@ -139,13 +208,17 @@ export default {
     },
 
     async deleteUser(
-      { commit }: ActionContext<IUsersState, IRootState>,
-      userId: number
+      { state, commit, dispatch }: ActionContext<IUsersState, IRootState>,
+      { userId, page }: { userId: number; page: number }
     ) {
       try {
         const response = await axios.delete(`${BACKEND_URL}/${userId}`);
         if (response.status !== 204) {
           throw new Error("Request failed");
+        }
+        // some data is not loaded
+        if (!allUsersLoaded(state.array)) {
+          await dispatch("getAllUsers");
         }
         commit("REMOVE_USER", userId);
       } catch (error) {

@@ -36,7 +36,7 @@ onMounted(() => {
     return;
   }
 
-  store.dispatch("users/getAllUsers");
+  store.dispatch("users/getUsers", { pageIdx: 1 });
 });
 </script>
 

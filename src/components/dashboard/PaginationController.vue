@@ -1,5 +1,6 @@
 <template>
   <div
+    v-if="totalUsers > 0"
     class="h-[30px] bg-blue-400 self-start border-solid border-[1px] border-brandGrey-100 rounded-[4px] overflow-hidden flex justify-start items-stretch divide-x-[1px] divide-brandGrey-100"
   >
     <button
@@ -35,22 +36,38 @@
 import DoubleArrowLeftIcon from "../icons/DoubleArrowLeftIcon.vue";
 import DoubleArrowRightIcon from "../icons/DoubleArrowRightIcon.vue";
 import { computed } from "@vue/reactivity";
-import { getNumberOfPages } from "@/utils/utils";
+import { allUsersLoaded, getNumberOfPages } from "@/utils/utils";
 import { watchEffect } from "vue";
 import { useTypedStore } from "@/store";
+import { USERS_PER_PAGE } from "@/utils/constants";
 
 const store = useTypedStore();
 const activePage = computed(() => store.state.dashboard.activePage);
-const filteredUsers = computed(() => store.getters["users/getFilteredUsers"]);
-const pages = computed(() => getNumberOfPages(filteredUsers.value.length));
+const usersArray = computed(() =>
+  store.state.users.array.slice(
+    (activePage.value - 1) * USERS_PER_PAGE,
+    activePage.value * USERS_PER_PAGE
+  )
+);
+const totalUsers = computed(() => {
+  if (allUsersLoaded(store.state.users.array)) {
+    return store.getters["users/getFilteredArray"].length;
+  }
+  return store.getters["users/getTotalUsers"];
+});
+
+const pages = computed(() => getNumberOfPages(totalUsers.value));
 
 const updateActivePage = (page: number) => {
   store.commit("dashboard/SET_ACTIVE_PAGE", page);
+  if (usersArray.value.some((val) => !val)) {
+    store.dispatch("users/getUsers", { pageIdx: page });
+  }
 };
 
 watchEffect(() => {
   if (pages.value && pages.value < activePage.value) {
-    updateActivePage(pages.value);
+    updateActivePage(1);
   }
 });
 

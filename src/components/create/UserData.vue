@@ -37,9 +37,10 @@ import { IUser } from "@/utils/types";
 import InputCell from "./InputCell.vue";
 import { computed, ref, defineProps } from "vue";
 import UserImage from "./UserImage.vue";
-import { PLACEHOLDER_USER } from "@/utils/constants";
 import { useRouter } from "vue-router";
 import { useTypedStore } from "@/store";
+import { toast } from "vue3-toastify";
+import "vue3-toastify/dist/index.css";
 
 interface IUserData {
   user?: IUser;
@@ -84,7 +85,8 @@ const modifyUser = async () => {
       avatar: image.value,
     });
 
-    router.push("/");
+    await router.push("/");
+    toast.success("User modified!");
   } finally {
     isLoading.value = false;
   }
@@ -99,7 +101,8 @@ const createUser = async () => {
       avatar: image.value,
     });
 
-    router.push("/");
+    await router.push("/");
+    toast.success("User created!");
   } finally {
     isLoading.value = false;
   }

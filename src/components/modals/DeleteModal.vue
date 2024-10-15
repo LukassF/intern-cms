@@ -24,6 +24,8 @@
 <script setup lang="ts">
 import { useTypedStore } from "@/store";
 import { defineProps } from "vue";
+import { toast } from "vue3-toastify";
+import "vue3-toastify/dist/index.css";
 
 interface IDeleteModal {
   userId: number;
@@ -33,7 +35,11 @@ const props = defineProps<IDeleteModal>();
 const store = useTypedStore();
 
 const onClickConfirm = async () => {
-  await store.dispatch("users/deleteUser", props.userId);
+  await store.dispatch("users/deleteUser", {
+    userId: props.userId,
+    page: store.state.dashboard.activePage,
+  });
+  toast.info("User deleted!");
   store.commit("app/SET_SHOW_OVERLAY", false);
 };
 
