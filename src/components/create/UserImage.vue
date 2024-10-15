@@ -21,7 +21,6 @@
 </template>
 
 <script setup lang="ts">
-import { PLACEHOLDER_PROFILE_IMAGE } from "@/utils/constants";
 import CameraIcon from "../icons/CameraIcon.vue";
 import { Component, defineProps } from "vue";
 import store from "@/store";
@@ -35,6 +34,7 @@ interface IUserImage {
 
 const props = defineProps<IUserImage>();
 
+// navigate to change image modal with data
 const onClickChangeImage = (isOpen: boolean, modal: Component) => {
   const data = {
     avatar: props.image,

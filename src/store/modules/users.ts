@@ -3,24 +3,14 @@ import {
   PLACEHOLDER_USER,
   USERS_PER_PAGE,
 } from "@/utils/constants";
-import {
-  IAppState,
-  IOverlayData,
-  IResponseUser,
-  IRootState,
-  IUser,
-  IUsersState,
-} from "@/utils/types";
+import { IResponseUser, IRootState, IUser, IUsersState } from "@/utils/types";
 import {
   allUsersLoaded,
   createRequestFromUser,
   createUserFromResponse,
-  getNumberOfPages,
   matchesSearch,
 } from "@/utils/utils";
 import axios from "axios";
-import { Component } from "vue";
-import { Router } from "vue-router";
 import { ActionContext } from "vuex";
 
 export default {
@@ -127,7 +117,8 @@ export default {
         commit("dashboard/SET_TABLE_LOADING", false, { root: true });
       }
     },
-    // we have to use getAllUsers because of maintainability isues, visit README.md for more info
+    // we have to use getAllUsers in some cases because of maintainability isues
+    // visit README.md for more info
     async getAllUsers({
       state,
       commit,
@@ -209,14 +200,14 @@ export default {
 
     async deleteUser(
       { state, commit, dispatch }: ActionContext<IUsersState, IRootState>,
-      { userId, page }: { userId: number; page: number }
+      { userId }: { userId: number }
     ) {
       try {
         const response = await axios.delete(`${BACKEND_URL}/${userId}`);
         if (response.status !== 204) {
           throw new Error("Request failed");
         }
-        // some data is not loaded
+        // some data is not loaded so we fetch all to avoid pitfalls
         if (!allUsersLoaded(state.array)) {
           await dispatch("getAllUsers");
         }

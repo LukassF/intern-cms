@@ -1,10 +1,4 @@
-import { BACKEND_URL, USERS_PER_PAGE } from "@/utils/constants";
-import { IAppState, IOverlayData, IResponseUser, IUser } from "@/utils/types";
-import { getNumberOfPages } from "@/utils/utils";
-import axios from "axios";
-import { Component } from "vue";
-import { Router } from "vue-router";
-import { ActionContext } from "vuex";
+import { IAppState, IOverlayData } from "@/utils/types";
 
 export default {
   namespaced: true,

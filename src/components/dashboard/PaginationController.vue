@@ -36,7 +36,11 @@
 import DoubleArrowLeftIcon from "../icons/DoubleArrowLeftIcon.vue";
 import DoubleArrowRightIcon from "../icons/DoubleArrowRightIcon.vue";
 import { computed } from "@vue/reactivity";
-import { allUsersLoaded, getNumberOfPages } from "@/utils/utils";
+import {
+  allUsersLoaded,
+  getNumberOfPages,
+  getUsersForPage,
+} from "@/utils/utils";
 import { watchEffect } from "vue";
 import { useTypedStore } from "@/store";
 import { USERS_PER_PAGE } from "@/utils/constants";
@@ -44,10 +48,7 @@ import { USERS_PER_PAGE } from "@/utils/constants";
 const store = useTypedStore();
 const activePage = computed(() => store.state.dashboard.activePage);
 const usersArray = computed(() =>
-  store.state.users.array.slice(
-    (activePage.value - 1) * USERS_PER_PAGE,
-    activePage.value * USERS_PER_PAGE
-  )
+  getUsersForPage(store.state.users.array, activePage.value)
 );
 const totalUsers = computed(() => {
   if (allUsersLoaded(store.state.users.array)) {
@@ -60,6 +61,7 @@ const pages = computed(() => getNumberOfPages(totalUsers.value));
 
 const updateActivePage = (page: number) => {
   store.commit("dashboard/SET_ACTIVE_PAGE", page);
+  // fetch users for requested page if they are not loaded yet
   if (usersArray.value.some((val) => !val)) {
     store.dispatch("users/getUsers", { pageIdx: page });
   }

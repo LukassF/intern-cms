@@ -37,6 +37,8 @@ const props = defineProps<IChangeImageModal>();
 const store = useTypedStore();
 
 const avatar = ref(props.avatar ?? "");
+
+// debounce to improve performance
 const debouncedInput = debounce((value: string) => {
   avatar.value = value;
 }, 300);

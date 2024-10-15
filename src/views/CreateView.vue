@@ -19,7 +19,6 @@
 
 <script setup lang="ts">
 import UserData from "@/components/create/UserData.vue";
-import ArrowLeftIcon from "@/components/icons/ArrowLeftIcon.vue";
 import DoubleArrowLeftIcon from "@/components/icons/DoubleArrowLeftIcon.vue";
 import { useTypedStore } from "@/store";
 import { computed } from "vue";

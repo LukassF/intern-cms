@@ -37,7 +37,6 @@ const store = useTypedStore();
 const onClickConfirm = async () => {
   await store.dispatch("users/deleteUser", {
     userId: props.userId,
-    page: store.state.dashboard.activePage,
   });
   toast.info("User deleted!");
   store.commit("app/SET_SHOW_OVERLAY", false);

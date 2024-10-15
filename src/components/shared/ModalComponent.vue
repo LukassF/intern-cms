@@ -25,6 +25,7 @@ const translate = ref(isXs.value ? "translate-y-full" : "-translate-y-full");
 
 const isOpen = computed(() => store.state.app.showOverlay);
 
+// enter/leave animations handling
 watchSyncEffect(() => {
   const isMobile = isXs.value;
 

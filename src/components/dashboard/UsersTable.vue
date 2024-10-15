@@ -36,7 +36,7 @@
 import TableHead from "./TableHead.vue";
 import TableRow from "./TableRow.vue";
 import { useRouter } from "vue-router";
-import { Component, computed, ref, watchEffect } from "vue";
+import { Component, computed } from "vue";
 import DeleteModal from "../modals/DeleteModal.vue";
 import { getUsersForPage } from "@/utils/utils";
 import { useTypedStore } from "@/store";
@@ -47,6 +47,7 @@ const store = useTypedStore();
 const router = useRouter();
 
 const activePage = computed(() => store.state.dashboard.activePage);
+// users filtered by search
 const filteredUsers = computed(() => store.getters["users/getFilteredArray"]);
 
 const usersForPage = computed(() =>
@@ -64,6 +65,7 @@ const navigateModifyUser = (userId: number) => {
   });
 };
 
+// navigate to the delete modal with data
 const setOverlayDelete = (
   isOpen: boolean,
   modal: Component,
