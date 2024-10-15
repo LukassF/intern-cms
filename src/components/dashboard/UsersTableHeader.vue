@@ -9,6 +9,8 @@
         type="text"
         placeholder="Search for users..."
         class="bg-transparent text-sm outline-none text-brandGrey-300 flex-1 min-w-[140px]"
+        @input="(e) => setSearchValue((e.target as HTMLInputElement).value)"
+        :value="searchValue"
       />
       <div class="flex items-center">
         <SearchIcon />
@@ -25,14 +27,28 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from "vue";
 import SearchIcon from "../icons/SearchIcon.vue";
 import { useRouter } from "vue-router";
+import { useTypedStore } from "@/store";
+import { allUsersLoaded } from "@/utils/utils";
 
 const router = useRouter();
+const store = useTypedStore();
+const searchValue = ref(store.state.dashboard.userSearch);
 
 const navigateCreateUser = () => {
   router.push({
     name: "create",
   });
+};
+
+const setSearchValue = async (val: string) => {
+  searchValue.value = val;
+  // some users are not loaded
+  if (!allUsersLoaded(store.state.users.array)) {
+    await store.dispatch("users/getAllUsers");
+  }
+  store.commit("dashboard/SET_USER_SEARCH", val);
 };
 </script>

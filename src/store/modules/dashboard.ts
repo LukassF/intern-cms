@@ -1,21 +1,22 @@
-interface IDahboardState {
-  numberOfPages: number;
-  activePage: number;
-}
+import { IDahboardState } from "@/utils/types";
 
 export default {
-  namespaced: true, // Namespaced to isolate this module
+  namespaced: true,
   state: (): IDahboardState => ({
-    numberOfPages: 5,
     activePage: 1,
+    userSearch: "",
+    tableLoading: true,
   }),
+
   mutations: {
-    setNumberOfPages(state: IDahboardState, pages: number) {
-      state.numberOfPages = pages;
-    },
-    setActivePage(state: IDahboardState, page: number) {
+    SET_ACTIVE_PAGE(state: IDahboardState, page: number) {
       state.activePage = page;
     },
+    SET_USER_SEARCH(state: IDahboardState, val: string) {
+      state.userSearch = val;
+    },
+    SET_TABLE_LOADING(state: IDahboardState, val: boolean) {
+      state.tableLoading = val;
+    },
   },
-  actions: {},
 };

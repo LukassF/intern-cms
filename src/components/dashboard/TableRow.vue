@@ -6,11 +6,11 @@
   >
     <td class="h-[50px] xs:h-[55px] flex items-center">
       <div
-        class="h-[30px] xs:h-[35px] aspect-square rounded-full bg-blue-400 overflow-hidden"
+        class="h-[30px] xs:h-[35px] aspect-square rounded-full overflow-hidden"
       >
-        <img
-          :src="props.image ?? PLACEHOLDER_PROFILE_IMAGE"
-          class="w-full h-full object-cover"
+        <ImageHandler
+          :src="props.image"
+          customClass="w-full h-full object-cover"
         />
       </div>
     </td>
@@ -45,10 +45,10 @@
 </template>
 
 <script setup lang="ts">
-import { PLACEHOLDER_PROFILE_IMAGE } from "@/utils/constants";
 import EditIcon from "../icons/EditIcon.vue";
 import TrashIcon from "../icons/TrashIcon.vue";
 import { defineProps } from "vue";
+import ImageHandler from "../shared/ImageHandler.vue";
 
 interface ITableRow {
   index: number;
