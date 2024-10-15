@@ -97,8 +97,9 @@ export default {
       try {
         commit("dashboard/SET_TABLE_LOADING", true, { root: true });
 
+        // add delay to showcase loading
         const usersResponse = await axios.get(
-          `${BACKEND_URL}?per_page=${USERS_PER_PAGE}&page=${pageIdx}&delay=5`
+          `${BACKEND_URL}?per_page=${USERS_PER_PAGE}&page=${pageIdx}&delay=4`
         );
 
         if (!usersResponse?.data?.data) {
