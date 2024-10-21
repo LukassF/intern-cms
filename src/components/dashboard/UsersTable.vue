@@ -2,7 +2,7 @@
   <div class="w-full flex-1">
     <table class="w-full">
       <TableHead v-if="usersForPage?.length > 0 && !isLoading" />
-      <div v-if="!isLoading">
+      <div v-if="isLoading">
         <LoaderTableRow v-for="(_, idx) in Array(USERS_PER_PAGE)" :key="idx" />
       </div>
       <div v-else-if="usersForPage?.length > 0">
